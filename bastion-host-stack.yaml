@@ -1,0 +1,61 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: YippieDo Bastion Host
+
+Parameters:
+  AmazonLinuxAMIID:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2
+
+Resources:
+  BastionSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable SSH access to the Bastion Host
+      VpcId: !ImportValue YippieDoVPC
+      Tags:
+        - Key: Name
+          Value: BastionSecurityGroup
+
+  BastionSecurityGroupSSHIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref BastionSecurityGroup
+      IpProtocol: tcp
+      FromPort: 22
+      ToPort: 22
+      CidrIp: 0.0.0.0/0
+
+  BastionHostNetworkInterface:
+    Type: AWS::EC2::NetworkInterface
+    Properties:
+      Description: Network interface for Bastion Host
+      SubnetId: !ImportValue PublicSubnet1
+      GroupSet:
+        - !Ref BastionSecurityGroup
+      Tags:
+        - Key: Name
+          Value: BastionHostNetworkInterface
+
+  EIPForBastionHost:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+
+  EIPAssociation:
+    Type: AWS::EC2::EIPAssociation
+    Properties:
+      AllocationId: !GetAtt EIPForBastionHost.AllocationId
+      NetworkInterfaceId: !Ref BastionHostNetworkInterface
+
+  BastionHost:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      ImageId: !Ref AmazonLinuxAMIID
+      NetworkInterfaces:
+        - NetworkInterfaceId: !Ref BastionHostNetworkInterface
+          DeviceIndex: 0
+      KeyName: bastion-host-key
+      Tags:
+        - Key: Name
+          Value: BastionHost
