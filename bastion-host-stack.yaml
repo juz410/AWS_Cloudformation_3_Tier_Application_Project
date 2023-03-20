@@ -59,3 +59,16 @@ Resources:
       Tags:
         - Key: Name
           Value: BastionHost
+
+Outputs:
+  BastionHostElasticIP:
+    Description: Elastic IP address of the Bastion Host
+    Value: !GetAtt EIPForBastionHost.PublicIp
+    Export:
+      Name: BastionHostElasticIP
+
+  BastionSecurityGroup:
+    Description: Security group for the Bastion Host
+    Value: !Ref BastionSecurityGroup
+    Export:
+      Name: BastionSecurityGroup

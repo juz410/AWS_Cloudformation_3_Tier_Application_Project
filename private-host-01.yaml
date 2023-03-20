@@ -1,0 +1,49 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: YippieDo Private Host
+
+Parameters:
+  AmazonLinuxAMIID:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2
+
+Resources:
+  PrivateHostSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable SSH access to the Private Host from Bastion Host
+      VpcId: !ImportValue YippieDoVPC
+      Tags:
+        - Key: Name
+          Value: PrivateHostSecurityGroup
+
+  PrivateHostSecurityGroupSSHIngress:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref PrivateHostSecurityGroup
+      IpProtocol: tcp
+      FromPort: 22
+      ToPort: 22
+      SourceSecurityGroupId: !ImportValue BastionSecurityGroup
+
+  PrivateHost:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: t2.micro
+      ImageId: !Ref AmazonLinuxAMIID
+      KeyName: private-host-01
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: false
+          DeviceIndex: 0
+          SubnetId: !ImportValue PrivateSubnet1
+          GroupSet:
+            - !Ref PrivateHostSecurityGroup
+      Tags:
+        - Key: Name
+          Value: PrivateHost
+
+Outputs:
+  PrivateHostIP:
+    Description: Private IP address of the Private Host
+    Value: !GetAtt PrivateHost.PrivateIp
+    Export:
+      Name: PrivateHostIP
