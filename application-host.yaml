@@ -1,0 +1,64 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Launch EC2 instance for YippieDo Inventory App
+
+Parameters:
+  AmazonLinuxAMIID:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2
+
+
+Resources:
+
+  YippieDoInventoryAppSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable SSH and HTTP access
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+      VpcId: !ImportValue YippieDoVPC
+      Tags:
+        - Key: Name
+          Value: AppHostSecurityGroup
+
+  InventoryAppInstance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      ImageId: !Ref AmazonLinuxAMIID
+      InstanceType: t2.micro
+      KeyName: application-host-key
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: true
+          DeviceIndex: 0
+          GroupSet:
+            - !Ref YippieDoInventoryAppSecurityGroup
+          SubnetId: !ImportValue PublicSubnet1
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          # Install required software for PHP application
+          echo "nameserver 8.8.8.8" | sudo tee -a /etc/resolv.conf
+          sudo yum update -y
+          sudo yum install -y httpd php php-mysqlnd mysql
+
+      Tags:
+        - Key: Name
+          Value: YippieDoAppHost
+
+  
+Outputs:
+  InventoryAppInstance:
+    Description: ID of the EC2 instance for YippieDo Inventory App
+    Value: !Ref InventoryAppInstance
+    Export:
+      Name: YippieDo-Inventory-App-Instance
