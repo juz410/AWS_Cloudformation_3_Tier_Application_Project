@@ -43,17 +43,13 @@ Resources:
           GroupSet:
             - !Ref YippieDoInventoryAppSecurityGroup
           SubnetId: !ImportValue PublicSubnet1
-      UserData:
-        Fn::Base64: !Sub |
-          #!/bin/bash
-          # Install required software for PHP application
-          echo "nameserver 8.8.8.8" | sudo tee -a /etc/resolv.conf
-          sudo yum update -y
-          sudo yum install -y httpd php php-mysqlnd mysql
-
       Tags:
         - Key: Name
           Value: YippieDoAppHost
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          echo "nameserver 8.8.8.8" | sudo tee -a /etc/resolv.conf
 
   
 Outputs:

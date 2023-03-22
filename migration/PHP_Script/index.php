@@ -9,16 +9,9 @@
 
 	<div id="header" class="mainHeader">
 		<hr>
-		<div class="center"><H1>Lola Social Research Organization</H1></div>
+		<div class="center"><H1>Example Social Research Organization</H1></div>
 	</div>
 	<br>
-	<?php
-		// Get the application environment parameters from the Parameter Store.
-		include ('getAppParameters.php');
-
-		// Display the server metadata information if the showServerInfo parameter is true.
-	
-	?>
 	<hr>
 	<div class="topnav">
 		<a href="#aboutUs">About Us</a>
@@ -29,7 +22,7 @@
 	<div id="mainContent">
 
 		<div id="mainPictures" class="center">
-			
+
 			<hr>
 			<p>Welcome to our data query site. You can get data from countries all over the world to use in your research. </p>
 			<br>
@@ -37,7 +30,7 @@
 				<tr>
 				    <td>
 						<div class="cursiveText">We provide data for a variety of areas including basic demographics and development statistics.</div>
-						
+
 					</td>
 				</tr>
 			</table>
@@ -53,8 +46,8 @@
 			<table>
 				<tr>
 					<td><figure><img src="Shirley.jpeg" height=auto width="400"><figcaption>Shirley Rodriguez</figcaption></figure></td>
-				</tr>	
-					<tr><td><p>Our site got started when Maria Gondalaz found that she was frequently looking up data from a variety of databases. <br>Shirley decided to start sharing some of this data with other social researchers. </p></td>
+				</tr>
+					<tr><td><p>Our site got started when Shirley Rodriguez found that she was frequently looking up data from a variety of databases. <br>Shirley decided to start sharing some of this data with other social researchers. </p></td>
 				</tr>
 			</table>
 			<hr>
