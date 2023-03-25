@@ -15,7 +15,7 @@ echo "Region =" $AWS_DEFAULT_REGION
 #
 # Set the application parameter values.
 #
-$db_endpoint="yippiedodb.cd4y6yt543ys.us-west-1.rds.amazonaws.com"
+$db_endpoint="yippidodb.cd4y6yt543ys.us-west-1.rds.amazonaws.com"
 echo
 echo "Setting the application parameter values in the Parameter Store..."
 aws ssm put-parameter --name "/example/endpoint" --type "String" --value $db_endpoint --description "Database URL" --overwrite
